@@ -2,48 +2,32 @@
 
 class Spider
 
-  constructor: (@name, @running, @jobId) ->
+  constructor: (@name, @running, @jobId, @scrapyService) ->
 
   start: =>
+    @scrapyService.startSpider(@name).then (data) =>
+      @jobId = data.jobid
     @running = true
 
-  stop: =>
+  cancel: =>
+    @scrapyService.cancelSpider(@jobId)
     @running = false
     @jobId = ''
 
 angular.module('crawlerInterfaceApp')
-  .controller 'MainCtrl', ($scope, $http) ->
+  .controller 'MainCtrl', ($scope, ScrapyService) ->
     $scope.spiders = []
     $scope.finishedJobs = []
     $scope.runningJobs = []
 
-    config = {
-      method: 'GET',
-      url: 'http://localhost:6800/listjobs.json',
-      params: {
-        'project': 'default'
-      }
-    }
-    $http(config)
-      .success (data, status, headers, config) ->
-        $scope.finishedJobs.push(job) for job in data.finished
-        $scope.runningJobs.push(job) for job in data.running
-        console.log data
-      .error (data, status, headers, config) ->
-        console.log data
+    ScrapyService.getJobs().then (data) ->
+      $scope.finishedJobs.push(job) for job in data.finished
+      $scope.runningJobs.push(job) for job in data.running
 
-    config = {
-      method: 'GET',
-      url: 'http://localhost:6800/listspiders.json',
-      params: {
-        'project': 'default'
-      }
-    }
-    $http(config)
-      .success (data, status, headers, config) =>
-        $scope.spiders.push(new Spider(spider, isRunning(spider), getJobId(spider))) for spider in data.spiders
-      .error (data, status, headers, config) ->
-        console.log data
+    ScrapyService.getSpiders().then (data) ->
+      for spiderName in data.spiders
+        spider = new Spider(spiderName, isRunning(spiderName), getJobId(spiderName), ScrapyService)
+        $scope.spiders.push(spider)
 
     isRunning = (spider) ->
       for runningJob in $scope.runningJobs
@@ -58,38 +42,7 @@ angular.module('crawlerInterfaceApp')
       return ''
 
     $scope.startSpider = (spider) ->
-      data = {}
-      config = {
-        headers: {
-          'Content-Type': undefined
-        },
-        params: {
-          'project': 'default',
-          'spider': spider.name
-        }
-      }
-      $http.post('http://localhost:6800/schedule.json', data, config)
-        .success (data, status, headers, config) ->
-          spider.start()
-          spider.jobId = data.jobid
-          console.log data
-        .error (data, status, headers, config) ->
-          console.log data
+      spider.start()
 
     $scope.cancelSpider = (spider) ->
-      data = {}
-      config = {
-        headers: {
-          'Content-Type': undefined
-        },
-        params: {
-          'project': 'default',
-          'job': spider.jobId
-        }
-      }
-      $http.post('http://localhost:6800/cancel.json', data, config)
-        .success (data, status, headers, config) ->
-          spider.stop()
-          console.log data
-        .error (data, status, headers, config) ->
-          console.log data
+      spider.cancel()
