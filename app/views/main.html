@@ -1,9 +1,40 @@
 <div class="hero-unit">
-  <h1>'Allo, 'Allo!</h1>
-  <p>You now have</p>
-  <ul>
-      <li ng-repeat="thing in awesomeThings">{{thing}}</li>
-  </ul>
-  <p>installed.</p>
-  <h3>Enjoy coding! - Yeoman</h3>
+  <h1>Spiders</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>spider</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="spider in spiders">
+        <td>
+          <button class="btn" ng-click="startSpider(spider)" ng-disabled="spider.running">{{spider.name}}</button>
+        </td>
+        <td>
+          <button class="btn btn-danger" ng-click="cancelSpider(spider)" ng-show="spider.running">cancel</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h1>Finished Jobs</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>spider</th>
+        <th>id</th>
+        <th>start</th>
+        <th>end</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="job in finishedJobs">
+        <td>{{job.spider}}</td>
+        <td>{{job.id}}</td>
+        <td>{{job.start_time}}</td>
+        <td>{{job.end_time}}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
