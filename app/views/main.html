@@ -1,23 +1,88 @@
 <div class="hero-unit">
   <h1>Spiders</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>spider</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="spider in spiders">
-        <td>
-          <button class="btn" ng-click="startSpider(spider)" ng-disabled="spider.running">{{spider.name}}</button>
-        </td>
-        <td>
-          <button class="btn btn-danger" ng-click="cancelSpider(spider)" ng-show="spider.running">cancel</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <div ng-repeat="spider in spiders">
+      <button class="btn" ng-click="startSpider(spider)" ng-disabled="spider.running">{{spider.name}}</button>
+      <button class="btn btn-danger" ng-click="cancelSpider(spider)" ng-show="spider.running">cancel</button>
+      <button class="btn btn-info" ng-click="spider.showStats = !spider.showStats" ng-show="spider.running">stats</button>
+      <div ng-show="spider.showStats">
+        <table>
+          <tbody>
+            <tr>
+              <td>downloader/request_bytes:</td>
+              <td>{{spider.stats['log_count/DEBUG']}}</td>
+            </tr>
+            <tr>
+              <td>downloader/request_count:</td>
+              <td>{{spider.stats['downloader/request_count']}}</td>
+            </tr>
+            <tr>
+              <td>downloader/request_method_count/GET:</td>
+              <td>{{spider.stats['downloader/request_method_count/GET']}}</td>
+            </tr>
+            <tr>
+              <td>downloader/response_bytes:</td>
+              <td>{{spider.stats['downloader/response_bytes']}}</td>
+            </tr>
+            <tr>
+              <td>downloader/response_count:</td>
+              <td>{{spider.stats['downloader/response_count']}}</td>
+            </tr>
+            <tr>
+              <td>downloader/response_status_count/200:</td>
+              <td>{{spider.stats['downloader/response_status_count/200']}}</td>
+            </tr>
+            <tr>
+              <td>item_dropped_count:</td>
+              <td>{{spider.stats['item_dropped_count']}}</td>
+            </tr>
+            <tr>
+              <td>item_dropped_reasons_count/DropItem:</td>
+              <td>{{spider.stats['item_dropped_reasons_count/DropItem']}}</td>
+            </tr>
+            <tr>
+              <td>log_count/DEBUG:</td>
+              <td>{{spider.stats['log_count/DEBUG']}}</td>
+            </tr>
+            <tr>
+              <td>log_count/INFO:</td>
+              <td>{{spider.stats['log_count/INFO']}}</td>
+            </tr>
+            <tr>
+              <td>log_count/WARNING:</td>
+              <td>{{spider.stats['log_count/WARNING']}}</td>
+            </tr>
+            <tr>
+              <td>request_depth_max:</td>
+              <td>{{spider.stats['request_depth_max']}}</td>
+            </tr>
+            <tr>
+              <td>response_received_count:</td>
+              <td>{{spider.stats['response_received_count']}}</td>
+            </tr>
+            <tr>
+              <td>scheduler/dequeued:</td>
+              <td>{{spider.stats['scheduler/dequeued']}}</td>
+            </tr>
+            <tr>
+              <td>scheduler/dequeued/memory:</td>
+              <td>{{spider.stats['scheduler/dequeued/memory']}}</td>
+            </tr>
+            <tr>
+              <td>scheduler/enqueued:</td>
+              <td>{{spider.stats['scheduler/enqueued']}}</td>
+            </tr>
+            <tr>
+              <td>scheduler/enqueued/memory:</td>
+              <td>{{spider.stats['scheduler/enqueued/memory']}}</td>
+            </tr>
+            <tr>
+              <td>start_time:</td>
+              <td>{{spider.stats['start_time']}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   <h1>Finished Jobs</h1>
   <table class="table">
     <thead>
