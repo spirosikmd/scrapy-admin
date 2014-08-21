@@ -20,3 +20,6 @@ will start the scrapy process listening on `http://localhost:6800`. This url is 
 the data from Scrapy.
 
 Finally run `grunt server` from scrapy-admin root directory to start the AngularJS project.
+
+The whole project of course requires a working Scrapy projec which uses in some way [flask-sse](https://github.com/DazWorrall/flask-sse/)
+to publish data.
