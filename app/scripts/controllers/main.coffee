@@ -5,16 +5,27 @@ class Spider
   constructor: (@name, @running, @jobId, @scrapyService, @scope) ->
     @stats = {}
     @showStats = false
+    @pending = false
+
+  pend: (data) =>
+    @jobId = data.jobid
+    @pending = true
 
   start: =>
-    @scrapyService.startSpider(@name).then (data) =>
-      @jobId = data.jobid
+    @scope.$apply () =>
+      @pending = false
       @running = true
 
+  reset: =>
+    @running = false
+    @jobId = ''
+
   cancel: =>
-    @scrapyService.cancelSpider(@jobId).then (data) =>
-      @running = false
-      @jobId = ''
+    @reset()
+
+  close: =>
+    @scope.$apply () =>
+      @reset()
 
   updateStats: (stats) =>
     @scope.$apply () =>
@@ -54,23 +65,27 @@ angular.module('crawlerInterfaceApp')
       return undefined
 
     $scope.startSpider = (spider) ->
-      spider.start()
+      ScrapyService.startSpider(spider.name).then (data) =>
+        spider.pend(data)
 
     $scope.cancelSpider = (spider) ->
-      spider.cancel()
+      ScrapyService.cancelSpider(spider.jobId).then (data) =>
+        spider.cancel()
 
     spiderOpened = (msg) ->
-      console.log "Spider opened"
-      console.log JSON.parse(msg.data)
+      data = JSON.parse(msg.data)
+      spider = getSpider(data.spider)
+      spider?.start()
 
     spiderClosed = (msg) ->
-      console.log "Spider closed"
-      console.log JSON.parse(msg.data)
+      data = JSON.parse(msg.data)
+      spider = getSpider(data.spider)
+      spider?.close()
 
     statsCollected = (msg) ->
       data = JSON.parse(msg.data)
       spider = getSpider(data.spider)
-      spider.updateStats(data.stats)
+      spider?.updateStats(data.stats)
 
     source = new EventSource('http://127.0.0.1:8080/stream?channel=crawler')
     source.addEventListener('spider_opened', spiderOpened, false)

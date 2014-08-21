@@ -1,10 +1,11 @@
-<div class="hero-unit">
+<div>
   <h1>Spiders</h1>
     <div ng-repeat="spider in spiders">
-      <button class="btn" ng-click="startSpider(spider)" ng-disabled="spider.running">{{spider.name}}</button>
+      <button class="btn" ng-click="startSpider(spider)" ng-disabled="spider.running || spider.pending">{{spider.name}}</button>
+      <span ng-show="spider.pending">Pending...</span>
       <button class="btn btn-danger" ng-click="cancelSpider(spider)" ng-show="spider.running">cancel</button>
       <button class="btn btn-info" ng-click="spider.showStats = !spider.showStats" ng-show="spider.running">stats</button>
-      <div ng-show="spider.showStats">
+      <div ng-show="spider.showStats && spider.running">
         <table>
           <tbody>
             <tr>
